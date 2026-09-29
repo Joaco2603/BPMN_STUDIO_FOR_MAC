@@ -7,6 +7,9 @@ pub fn validate_bpmn_xml(xml: &str) -> Result<(), AppError> {
     if trimmed.is_empty() {
         return Err(AppError::InvalidBpmn("document is empty".into()));
     }
+    if !trimmed.starts_with('<') {
+        return Err(AppError::InvalidBpmn("document is not XML".into()));
+    }
     if !trimmed.contains("definitions") {
         return Err(AppError::InvalidBpmn(
             "missing BPMN definitions element".into(),
@@ -29,5 +32,6 @@ mod tests {
     fn rejects_empty_and_non_bpmn_text() {
         assert!(validate_bpmn_xml("   ").is_err());
         assert!(validate_bpmn_xml("<html></html>").is_err());
+        assert!(validate_bpmn_xml("definitions without tags").is_err());
     }
 }

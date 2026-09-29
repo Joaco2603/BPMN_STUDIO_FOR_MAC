@@ -12,14 +12,24 @@ export function PropertyInspector({ selection, onRename }: PropertyInspectorProp
         Properties
       </header>
       {selection ? (
-        <label className="flex flex-col gap-2 px-4 py-4 text-sm">
-          <span className="text-[var(--studio-muted)]">{selection.kind}</span>
-          <input
-            className="rounded-md border border-[var(--studio-line)] bg-transparent px-2 py-1.5 outline-none"
-            value={selection.name}
-            onChange={(event) => onRename(selection.id, event.currentTarget.value)}
-          />
-        </label>
+        <div className="flex flex-col gap-4 px-4 py-4 text-sm">
+          <div className="flex flex-col gap-1">
+            <span className="text-xs text-[var(--studio-muted)] uppercase">Type</span>
+            <span>{selection.kind}</span>
+          </div>
+          <div className="flex flex-col gap-1">
+            <span className="text-xs text-[var(--studio-muted)] uppercase">Id</span>
+            <span className="break-all font-mono text-xs">{selection.id}</span>
+          </div>
+          <label className="flex flex-col gap-2">
+            <span className="text-xs text-[var(--studio-muted)] uppercase">Name</span>
+            <input
+              className="rounded-md border border-[var(--studio-line)] bg-transparent px-2 py-1.5 outline-none"
+              value={selection.name}
+              onChange={(event) => onRename(selection.id, event.currentTarget.value)}
+            />
+          </label>
+        </div>
       ) : (
         <p className="px-4 py-4 text-sm text-[var(--studio-muted)]">No selection</p>
       )}
