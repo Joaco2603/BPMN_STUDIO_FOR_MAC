@@ -139,6 +139,7 @@ export function StudioApp() {
         <PropertyInspector
           selection={selection}
           onRename={(id, name) => {
+            void canvasRef.current?.rename(id, name);
             setSelection((current) => (current && current.id === id ? { ...current, name } : current));
           }}
         />

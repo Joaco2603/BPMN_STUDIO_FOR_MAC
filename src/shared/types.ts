@@ -34,6 +34,7 @@ export type BpmnCanvasHandle = {
   loadXml: (xml: string) => Promise<void>;
   getSvg: () => Promise<string>;
   exportPng: () => Promise<Uint8Array>;
+  rename: (id: string, name: string) => Promise<void>;
 };
 
 export type StudioActions = {

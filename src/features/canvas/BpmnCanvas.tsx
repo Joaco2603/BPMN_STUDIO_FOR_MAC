@@ -20,6 +20,9 @@ export const BpmnCanvas = forwardRef<BpmnCanvasHandle, BpmnCanvasProps>(
         getSvg: async () =>
           `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="40"><text y="24">BPMN</text></svg>`,
         exportPng: async () => new Uint8Array(),
+        rename: async (id: string, name: string) => {
+          onSelectionChange({ id, kind: "unknown", name });
+        },
       }),
       [onSelectionChange, onXmlChange, xml],
     );
