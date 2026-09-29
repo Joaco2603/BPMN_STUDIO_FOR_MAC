@@ -2,8 +2,14 @@ export type ModelingService = {
   updateProperties: (element: unknown, properties: Record<string, unknown>) => void;
 };
 
+export type ModdleService = {
+  create: (type: string, properties: Record<string, unknown>) => unknown;
+};
+
 export type ElementRegistryService = {
   get: (id: string) => unknown;
+  getAll: () => unknown[];
+  getGraphics: (element: unknown) => unknown;
 };
 
 export type SelectionService = {
@@ -12,6 +18,9 @@ export type SelectionService = {
 
 export type CanvasService = {
   zoom: (level: "fit-viewport" | number) => number;
+  addMarker: (element: unknown, marker: string) => void;
+  removeMarker: (element: unknown, marker: string) => void;
+  getRootElement: () => unknown;
 };
 
 export type SaveXmlResult = {
@@ -46,8 +55,20 @@ export function asModelingService(value: unknown): ModelingService | null {
   return value as unknown as ModelingService;
 }
 
+export function asModdleService(value: unknown): ModdleService | null {
+  if (!isRecord(value) || !hasFunction(value, "create")) {
+    return null;
+  }
+  return value as unknown as ModdleService;
+}
+
 export function asElementRegistryService(value: unknown): ElementRegistryService | null {
-  if (!isRecord(value) || !hasFunction(value, "get")) {
+  if (
+    !isRecord(value) ||
+    !hasFunction(value, "get") ||
+    !hasFunction(value, "getAll") ||
+    !hasFunction(value, "getGraphics")
+  ) {
     return null;
   }
   return value as unknown as ElementRegistryService;
@@ -61,7 +82,13 @@ export function asSelectionService(value: unknown): SelectionService | null {
 }
 
 export function asCanvasService(value: unknown): CanvasService | null {
-  if (!isRecord(value) || !hasFunction(value, "zoom")) {
+  if (
+    !isRecord(value) ||
+    !hasFunction(value, "zoom") ||
+    !hasFunction(value, "addMarker") ||
+    !hasFunction(value, "removeMarker") ||
+    !hasFunction(value, "getRootElement")
+  ) {
     return null;
   }
   return value as unknown as CanvasService;
