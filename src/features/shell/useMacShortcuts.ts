@@ -3,9 +3,14 @@ import { useEffect } from "react";
 import type { StudioActions } from "../../shared/types";
 
 const MENU_EVENTS: Array<[string, keyof StudioActions]> = [
+  ["studio://new", "newDiagram"],
   ["studio://open", "open"],
   ["studio://save", "save"],
   ["studio://export", "exportDiagram"],
+  ["studio://sheet", "exportSheet"],
+  ["studio://example", "openExample"],
+  ["studio://undo", "undo"],
+  ["studio://redo", "redo"],
   ["studio://prompt", "toggleCommandBar"],
 ];
 
@@ -16,6 +21,21 @@ export function useMacShortcuts(actions: StudioActions): void {
         return;
       }
       const key = event.key.toLowerCase();
+      if (key === "n" && !event.shiftKey) {
+        event.preventDefault();
+        actions.newDiagram();
+        return;
+      }
+      if (key === "z" && event.shiftKey) {
+        event.preventDefault();
+        actions.redo();
+        return;
+      }
+      if (key === "z" && !event.shiftKey) {
+        event.preventDefault();
+        actions.undo();
+        return;
+      }
       if (key === "o" && !event.shiftKey) {
         event.preventDefault();
         actions.open();
@@ -29,6 +49,11 @@ export function useMacShortcuts(actions: StudioActions): void {
       if (key === "e" && event.shiftKey) {
         event.preventDefault();
         actions.exportDiagram();
+        return;
+      }
+      if (key === "p" && event.shiftKey) {
+        event.preventDefault();
+        actions.exportSheet();
         return;
       }
       if (key === "k" && !event.shiftKey) {

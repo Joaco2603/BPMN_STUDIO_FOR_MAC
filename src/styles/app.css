@@ -148,6 +148,58 @@ body {
   text-align: right;
 }
 
+.confirm-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--studio-line);
+  background: color-mix(in srgb, var(--studio-accent) 12%, var(--studio-panel));
+  font-size: 13px;
+}
+
+.confirm-bar__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.confirm-bar button {
+  border: 1px solid var(--studio-line);
+  border-radius: 6px;
+  background: var(--studio-panel);
+  color: var(--studio-fg);
+  font: inherit;
+  padding: 4px 10px;
+}
+
+.sheet-diagram svg {
+  width: 100%;
+  height: auto;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .sheet-preview,
+  .sheet-preview * {
+    visibility: visible;
+  }
+
+  .sheet-preview {
+    position: absolute;
+    inset: 0;
+    background: white;
+    color: black;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}
+
 /* Soft macOS canvas plane behind the diagram surface. */
 .relative.min-w-0.flex-1 {
   background-color: var(--studio-canvas);

@@ -23,9 +23,9 @@ pub struct ExportResult {
 
 #[tauri::command]
 pub fn export_diagram(app: AppHandle, request: ExportRequest) -> Result<Option<ExportResult>, AppError> {
-    let extension = match request.extension.as_str() {
-        "svg" | "png" => request.extension.as_str(),
-        _ => return Err(AppError::Message("export must be svg or png".into())),
+    let extension = match normalize_extension(&request.extension) {
+        Ok(extension) => extension,
+        Err(error) => return Err(error),
     };
     let bytes = base64::engine::general_purpose::STANDARD
         .decode(request.data_base64.trim())
@@ -34,7 +34,7 @@ pub fn export_diagram(app: AppHandle, request: ExportRequest) -> Result<Option<E
     let Some(picked) = app
         .dialog()
         .file()
-        .add_filter(extension, &[extension])
+        .add_filter(filter_name(extension), &[extension])
         .set_file_name(&format!("{}.{}", request.suggested_name, extension))
         .blocking_save_file()
     else {
@@ -60,6 +60,23 @@ pub fn export_diagram(app: AppHandle, request: ExportRequest) -> Result<Option<E
     }))
 }
 
+fn normalize_extension(extension: &str) -> Result<&str, AppError> {
+    match extension {
+        "svg" | "png" | "md" => Ok(extension),
+        _ => Err(AppError::Message(
+            "export must be svg, png, or md".into(),
+        )),
+    }
+}
+
+fn filter_name(extension: &str) -> &'static str {
+    match extension {
+        "png" => "PNG",
+        "md" => "Markdown",
+        _ => "SVG",
+    }
+}
+
 fn ensure_extension(path: PathBuf, extension: &str) -> PathBuf {
     match path.extension().and_then(|ext| ext.to_str()) {
         Some(current) if current.eq_ignore_ascii_case(extension) => path,
@@ -72,5 +89,18 @@ fn ensure_extension(path: PathBuf, extension: &str) -> PathBuf {
             file_name.push(extension);
             path.with_file_name(file_name)
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::normalize_extension;
+
+    #[test]
+    fn accepts_diagram_and_sheet_extensions() {
+        assert_eq!(normalize_extension("svg").unwrap(), "svg");
+        assert_eq!(normalize_extension("png").unwrap(), "png");
+        assert_eq!(normalize_extension("md").unwrap(), "md");
+        assert!(normalize_extension("pdf").is_err());
     }
 }
