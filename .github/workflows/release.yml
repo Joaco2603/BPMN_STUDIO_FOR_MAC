@@ -1,0 +1,45 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Build and draft GitHub release
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{ github.ref_name }}
+          releaseName: BPMN Studio ${{ github.ref_name }}
+          releaseBody: |
+            Draft macOS build of BPMN Studio.
+
+            Artifacts include `.dmg` and `.app` bundles from `src-tauri/tauri.conf.json`
+            (`productName` BPMN Studio, identifier `com.bpmnstudio.mac`, targets `dmg` and `app`).
+
+            The `.dmg` is unsigned unless Apple signing secrets are configured by a maintainer.
+            Notarization is not configured.
+          releaseDraft: true
+          prerelease: false
