@@ -9,6 +9,8 @@ const KIND_BY_TYPE: Record<string, BpmnElementKind> = {
   "bpmn:ServiceTask": "serviceTask",
   "bpmn:ExclusiveGateway": "exclusiveGateway",
   "bpmn:ParallelGateway": "parallelGateway",
+  "bpmn:Lane": "lane",
+  "bpmn:Participant": "participant",
   "bpmn:SequenceFlow": "sequenceFlow",
 };
 
@@ -48,5 +50,23 @@ export function selectionFromElement(element: unknown): BpmnSelection | null {
     id: idValue,
     kind: toElementKind(typeValue),
     name,
+    documentation: documentationText(businessObject.documentation),
   };
+}
+
+function documentationText(value: unknown): string {
+  if (!Array.isArray(value)) {
+    return "";
+  }
+  const parts: string[] = [];
+  for (const entry of value) {
+    if (!isRecord(entry)) {
+      continue;
+    }
+    const text = typeof entry.text === "string" ? entry.text : typeof entry.body === "string" ? entry.body : "";
+    if (text.trim()) {
+      parts.push(text);
+    }
+  }
+  return parts.join("\n");
 }
