@@ -14,10 +14,24 @@ AI requests run in Rust. API keys are stored in the macOS keychain. File open, s
 
 | Shortcut | Action |
 | --- | --- |
+| `Cmd+N` | New diagram |
 | `Cmd+O` | Open a BPMN diagram |
 | `Cmd+S` | Save the current diagram |
+| `Cmd+Z` | Undo |
+| `Cmd+Shift+Z` | Redo |
 | `Cmd+Shift+E` | Export as SVG |
+| `Cmd+Shift+P` | Open the process sheet (print or save Markdown) |
 | `Cmd+K` | Open the AI prompt / command bar |
+
+Help → Open Example loads `examples/intake.bpmn`.
+
+## What this is
+
+BPMN Studio is a Mac modeler for BPMN 2.0 files. It draws the diagram, stores documentation on each element, checks for missing starts, ends, names, and connections, and can turn a sentence into a diagram after you confirm the replacement.
+
+It opens and saves BPMN 2.0 XML, including extension data from other tools. It does not simulate a process, share a repository, or run the process. Those jobs belong to an automation platform, not this editor.
+
+The diagram canvas is [bpmn-js](https://bpmn.io/). Its project watermark stays visible, as that library's license requires. BPMN Studio does not copy another vendor's icons or interface.
 
 ## Development
 
@@ -35,6 +49,7 @@ Checks:
 
 ```bash
 npx tsc --noEmit
+node --experimental-strip-types --test src/features/**/*.test.ts
 cargo test --manifest-path src-tauri/Cargo.toml
 ```
 
