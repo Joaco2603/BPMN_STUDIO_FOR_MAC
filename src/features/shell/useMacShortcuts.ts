@@ -1,5 +1,13 @@
+import { listen, type UnlistenFn } from "@tauri-apps/api/event";
 import { useEffect } from "react";
 import type { StudioActions } from "../../shared/types";
+
+const MENU_EVENTS: Array<[string, keyof StudioActions]> = [
+  ["studio://open", "open"],
+  ["studio://save", "save"],
+  ["studio://export", "exportDiagram"],
+  ["studio://prompt", "toggleCommandBar"],
+];
 
 export function useMacShortcuts(actions: StudioActions): void {
   useEffect(() => {
@@ -30,6 +38,35 @@ export function useMacShortcuts(actions: StudioActions): void {
     };
 
     window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
+
+    let cancelled = false;
+    const unlisteners: UnlistenFn[] = [];
+
+    const bindMenuEvents = async () => {
+      try {
+        for (const [eventName, actionKey] of MENU_EVENTS) {
+          const unlisten = await listen(eventName, () => {
+            actions[actionKey]();
+          });
+          if (cancelled) {
+            unlisten();
+          } else {
+            unlisteners.push(unlisten);
+          }
+        }
+      } catch {
+        // Vite / browser preview is not inside Tauri.
+      }
+    };
+
+    void bindMenuEvents();
+
+    return () => {
+      cancelled = true;
+      window.removeEventListener("keydown", onKeyDown);
+      for (const unlisten of unlisteners) {
+        unlisten();
+      }
+    };
   }, [actions]);
 }

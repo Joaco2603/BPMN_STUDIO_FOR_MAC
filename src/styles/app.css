@@ -2,14 +2,23 @@
 
 :root {
   color-scheme: light dark;
-  --studio-bg: #f5f5f7;
+  --studio-bg: #ececef;
   --studio-fg: #1d1d1f;
   --studio-muted: #6e6e73;
-  --studio-panel: rgba(255, 255, 255, 0.92);
-  --studio-canvas: #fbfbfd;
-  --studio-line: rgba(0, 0, 0, 0.08);
+  --studio-panel: rgba(246, 246, 248, 0.86);
+  --studio-canvas: #f5f5f7;
+  --studio-line: rgba(0, 0, 0, 0.1);
   --studio-accent: #0071e3;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+  --studio-dot: rgba(0, 0, 0, 0.08);
+  --studio-titlebar-pad: 96px;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Text",
+    "SF Pro Display",
+    "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -17,10 +26,11 @@
     --studio-bg: #1c1c1e;
     --studio-fg: #f5f5f7;
     --studio-muted: #98989d;
-    --studio-panel: rgba(44, 44, 46, 0.92);
-    --studio-canvas: #161618;
-    --studio-line: rgba(255, 255, 255, 0.08);
+    --studio-panel: rgba(38, 38, 40, 0.88);
+    --studio-canvas: #141416;
+    --studio-line: rgba(255, 255, 255, 0.1);
     --studio-accent: #0a84ff;
+    --studio-dot: rgba(255, 255, 255, 0.08);
   }
 }
 
@@ -34,4 +44,113 @@ body,
 body {
   background: var(--studio-bg);
   color: var(--studio-fg);
+  user-select: none;
+}
+
+.title-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 52px;
+  padding: 0 12px 0 var(--studio-titlebar-pad);
+  border-bottom: 1px solid var(--studio-line);
+  background: var(--studio-panel);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  -webkit-app-region: drag;
+}
+
+.title-bar__center {
+  position: absolute;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: min(420px, calc(100% - 220px));
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.title-bar__title {
+  margin: 0;
+  overflow: hidden;
+  color: var(--studio-fg);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.title-bar__dirty {
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--studio-accent);
+}
+
+.title-bar__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--studio-muted);
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.2;
+  cursor: default;
+  -webkit-app-region: no-drag;
+}
+
+.title-bar__action:hover {
+  border-color: var(--studio-line);
+  background: color-mix(in srgb, var(--studio-fg) 6%, transparent);
+  color: var(--studio-fg);
+}
+
+.title-bar__action kbd {
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--studio-fg) 8%, transparent);
+  color: var(--studio-muted);
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 28px;
+  padding: 0 12px;
+  border-top: 1px solid var(--studio-line);
+  background: var(--studio-panel);
+  color: var(--studio-muted);
+  font-size: 11px;
+  letter-spacing: 0.01em;
+}
+
+.status-bar__path,
+.status-bar__message {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status-bar__message {
+  padding-left: 16px;
+  text-align: right;
+}
+
+/* Soft macOS canvas plane behind the diagram surface. */
+.relative.min-w-0.flex-1 {
+  background-color: var(--studio-canvas);
+  background-image: radial-gradient(var(--studio-dot) 1px, transparent 1px);
+  background-size: 16px 16px;
 }

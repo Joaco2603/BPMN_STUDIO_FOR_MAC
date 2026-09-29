@@ -6,17 +6,14 @@ export type TitleBarProps = {
 
 export function TitleBar({ title, dirty, onOpenCommandBar }: TitleBarProps) {
   return (
-    <header className="flex h-12 items-center gap-3 border-b border-[var(--studio-line)] bg-[var(--studio-panel)] pr-3 pl-24">
-      <h1 className="min-w-0 flex-1 truncate text-sm font-medium">
-        {title}
-        {dirty ? " ·" : ""}
-      </h1>
-      <button
-        type="button"
-        onClick={onOpenCommandBar}
-        className="rounded-md bg-[var(--studio-bg)] px-3 py-1 text-xs text-[var(--studio-muted)]"
-      >
+    <header className="title-bar">
+      <div className="title-bar__center">
+        <h1 className="title-bar__title">{title}</h1>
+        {dirty ? <span className="title-bar__dirty" aria-label="Unsaved changes" /> : null}
+      </div>
+      <button type="button" className="title-bar__action" onClick={onOpenCommandBar}>
         Prompt
+        <kbd>⌘K</kbd>
       </button>
     </header>
   );
